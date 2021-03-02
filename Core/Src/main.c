@@ -52,7 +52,11 @@ typedef struct
 
 } ADC_struct;
 
-ADC_struct ADC_Channel[3] = {0};
+ADC_struct ADC_Channel[2] = {0};
+uint8_t ADCMode = 0;
+uint16_t ADCOutputConverted = 0;
+float V25 = 1.41;  //??
+float Avg_Slope = 4.3;  //??
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -102,6 +106,8 @@ int main(void)
   MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
   ADCPollingInit();
+  uint16_t Time_Stamp = 0;
+  GPIO_PinState USER_State[2] = {0};
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -111,8 +117,31 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+
+	  //read USER
+
+	  if (HAL_GetTick() - Time_Stamp == 100)
+	  {
+		  USER_State[0] = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13);
+		  Time_Stamp = HAL_GetTick();
+		  if ((USER_State[1] == 0) & (USER_State[0] == 1))
+		  {
+			 ADCMode = (ADCMode + 1) % 2;
+		  }
+	  }
+	  USER_State[1] = USER_State[0];
 	  //read Analog
 	  ADCPollingUpdate();
+
+	  if (ADCMode == 0)
+	  {
+		  ADCOutputConverted = (ADC_Channel[0].Data *3300) /4096.0;
+	  }
+
+	  else if (ADCMode == 1)
+	  {
+		  ADCOutputConverted = ((((ADC_Channel[1].Data *3.3)/4096) - V25)/Avg_Slope) + 25.0 ;
+	  }
   }
   /* USER CODE END 3 */
 }
@@ -284,15 +313,10 @@ void ADCPollingInit()
 	ADC_Channel[0].Config.Rank = 1;
 	ADC_Channel[0].Config.SamplingTime = ADC_SAMPLETIME_3CYCLES;
 
-	//PA1
-	ADC_Channel[1].Config.Channel = ADC_CHANNEL_1;
+	//Temp
+	ADC_Channel[1].Config.Channel = ADC_CHANNEL_TEMPSENSOR;
 	ADC_Channel[1].Config.Rank = 1;
 	ADC_Channel[1].Config.SamplingTime = ADC_SAMPLETIME_3CYCLES;
-
-	//Temp
-	ADC_Channel[2].Config.Channel = ADC_CHANNEL_TEMPSENSOR;
-	ADC_Channel[2].Config.Rank = 1;
-	ADC_Channel[2].Config.SamplingTime = ADC_SAMPLETIME_3CYCLES;
 }
 
 void ADCPollingUpdate()
