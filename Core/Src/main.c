@@ -280,12 +280,12 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN 4 */
 void ADCPollingInit()
 {	//PA0
-	ADC_Channel[0].Config.Channel = ADC_Channel_0;
+	ADC_Channel[0].Config.Channel = ADC_CHANNEL_0;
 	ADC_Channel[0].Config.Rank = 1;
 	ADC_Channel[0].Config.SamplingTime = ADC_SAMPLETIME_3CYCLES;
 
 	//PA1
-	ADC_Channel[1].Config.Channel = ADC_Channel_1;
+	ADC_Channel[1].Config.Channel = ADC_CHANNEL_1;
 	ADC_Channel[1].Config.Rank = 1;
 	ADC_Channel[1].Config.SamplingTime = ADC_SAMPLETIME_3CYCLES;
 
@@ -300,13 +300,13 @@ void ADCPollingUpdate()
 	for (int i=0; i<3; i++)
 	{
 		//select channel
-		HAL_ADC_ConfigChannel(&hadc1, ADC_Channel[i].Config);
+		HAL_ADC_ConfigChannel(&hadc1, &ADC_Channel[i].Config);
 
 		//sampling, convert
 		HAL_ADC_Start(&hadc1);
 
 		//wait ADC
-		if(HAL_ADC_PollForConversion(&hadc1, 10) == HAL_OK);
+		if(HAL_ADC_PollForConversion(&hadc1, 10) == HAL_OK)
 		{
 			//get value
 			ADC_Channel[i].Data = HAL_ADC_GetValue(&hadc1);
