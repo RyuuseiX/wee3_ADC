@@ -55,8 +55,8 @@ typedef struct
 ADC_struct ADC_Channel[2] = {0};
 uint8_t ADCMode = 0;
 uint16_t ADCOutputConverted = 0;
-float V25 = 1.41;  //??
-float Avg_Slope = 4.3;  //??
+float V25 = 0.76;  //V
+float Avg_Slope = 2.5;  //mV/C
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
