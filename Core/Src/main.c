@@ -54,7 +54,7 @@ typedef struct
 
 ADC_struct ADC_Channel[2] = {0};
 uint8_t ADCMode = 0;
-uint16_t ADCOutputConverted = 0;
+float ADCOutputConverted = 0;
 float V25 = 0.76;  //V
 float Avg_Slope = 2.5;  //mV/C
 /* USER CODE END PV */
@@ -120,7 +120,7 @@ int main(void)
 
 	  //read USER
 
-	  if (HAL_GetTick() - Time_Stamp == 100)
+	  if (HAL_GetTick() - Time_Stamp >= 100)
 	  {
 		  USER_State[0] = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13);
 		  Time_Stamp = HAL_GetTick();
@@ -135,12 +135,12 @@ int main(void)
 
 	  if (ADCMode == 0)
 	  {
-		  ADCOutputConverted = (ADC_Channel[0].Data *3300) /4096.0;
+		  ADCOutputConverted = (ADC_Channel[0].Data *3300) /4096.0f;
 	  }
 
 	  else if (ADCMode == 1)
 	  {
-		  ADCOutputConverted = ((((ADC_Channel[1].Data *3.3)/4096) - V25)/Avg_Slope) + 25.0 ;
+		  ADCOutputConverted = (float)((((ADC_Channel[1].Data *3.3)/4096) - V25)/Avg_Slope) + (float)25.00;
 	  }
   }
   /* USER CODE END 3 */
